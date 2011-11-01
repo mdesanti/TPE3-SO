@@ -1,0 +1,7 @@
+/bin
+mtoolsrc
+/img
+.cproject
+.project
+bochs*
+grub*
