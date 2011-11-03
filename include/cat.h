@@ -1,13 +1,7 @@
-/*
- * cat.h
- *
- *  Created on: Oct 30, 2011
- *      Author: mdesanti90
- */
-
 #ifndef CAT_H_
 #define CAT_H_
 
+/* Prints the file passed in argv */
 int cat(int argc, char ** argv);
 
-#endif /* CAT_H_ */
+#endif

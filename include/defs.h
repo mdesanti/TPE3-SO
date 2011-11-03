@@ -1,7 +1,7 @@
 /***************************************************
-  Defs.h
-	
-****************************************************/
+ Defs.h
+
+ ****************************************************/
 
 #ifndef _defs_
 #define _defs_
@@ -52,7 +52,6 @@ typedef struct {
 #define P_CLEAR_SCREEN 2
 #define P_FORMAT 3
 
-
 #define byte unsigned char
 #define word short int
 #define dword int
@@ -79,33 +78,25 @@ typedef struct {
 #define STDIN 0
 #define PROCESS_QTY 1000
 
-
 #pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
 
 /* Descriptor de segmento */
 typedef struct {
-  word limit,
-       base_l;
-  byte base_m,
-       access,
-       attribs,
-       base_h;
+	word limit, base_l;
+	byte base_m, access, attribs, base_h;
 } DESCR_SEG;
-
 
 /* Descriptor de interrupcion */
 typedef struct {
-  word      offset_l,
-            selector;
-  byte      cero,
-            access;
-  word	    offset_h;
+	word offset_l, selector;
+	byte cero, access;
+	word offset_h;
 } DESCR_INT;
 
 /* IDTR  */
 typedef struct {
-  word  limit;
-  dword base;
+	word limit;
+	dword base;
 } IDTR;
 
 typedef unsigned int uint;

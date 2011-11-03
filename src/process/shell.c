@@ -1,23 +1,17 @@
-/*
- * shell.c
- *
- *  Created on: Oct 14, 2011
- *      Author: mdesanti90
- */
+#include "../../include/defs.h"
+#include "../../include/calls.h"
+#include "../../include/process.h"
+#include "../../include/top.h"
+#include "../../include/commands.h"
+#include "../../include/iolib.h"
+#include "../../include/terminal.h"
+#include "../../include/string.h"
+#include "../../include/systemCalls.h"
+#include "../../include/filesystem2.h"
+#include "../../include/users.h"
+#include "../../include/malloc.h"
+#include "../../include/cat.h"
 
-#include "../include/defs.h"
-#include "../include/calls.h"
-#include "../include/test.h"
-#include "../include/top.h"
-#include "../include/commands.h"
-#include "../include/iolib.h"
-#include "../include/terminal.h"
-#include "../include/string.h"
-#include "../include/systemCalls.h"
-#include "../include/filesystem2.h"
-#include "../include/users.h"
-#include "../include/malloc.h"
-#include "../include/cat.h"
 static void getKillParams(char * from, char * option, int * signal, int * pid);
 void getCDParameters(char * source, char * params);
 char * getPath(char * source);
@@ -25,21 +19,18 @@ char * getPath(char * source);
 void printShell() {
 	char * user = getTTYUser();
 	if (user != NULL
-	)
+		)
 		printf("%s@", getTTYUser());
 	printf("Dinux:$ ");
 }
 
 int shell(int argc, char ** argv) {
 	setForegroundProcess(getPID());
-//	char * user;
 	while (1) {
 		int back = 0, pid = -1;
 		char * c;
 		printShell();
 		c = read(STDIN);
-		//getStringInBuffer(); // Reads what's in shell buffer
-//			cleanShellBuffer();
 		if (c[0] == '&') {
 			back = 1;
 		}
@@ -48,9 +39,7 @@ int shell(int argc, char ** argv) {
 			info();
 		} else if (strcmp(c, "clear")) {
 			clearThisScreen();
-		}/*else if (strcmp(c, "scanfTest")) {
-		 scanfTest();
-		 }*/else if (strcmp(c + back, "commands")) {
+		} else if (strcmp(c + back, "commands")) {
 			commands();
 		} else if (startsWith("kill", 4, c + back)) {
 			int kpid = 0;
@@ -59,7 +48,6 @@ int shell(int argc, char ** argv) {
 			getKillParams(c + back, &option, &signal, &kpid);
 			printf("Killing %d\n", kpid);
 			signalP(option, signal, kpid);
-//				printf("%c - %d - %d\n", option, signal, kpid);
 		} else if (strcmp(c + back, "help")) {
 			help();
 		} else if (strcmp(c + back, "format")) {
@@ -76,9 +64,7 @@ int shell(int argc, char ** argv) {
 			pid = newProcess(procF, 0, 0, "ProcessF");
 		} else if (strcmp(c + back, "processG")) {
 			pid = newProcess(procG, 0, 0, "ProcessG");
-		} /* else if (strcmp(c + back, "A")) {
-		 switchTerminal();
-		 } */else if (strcmp(c + back, "top")) {
+		} else if (strcmp(c + back, "top")) {
 			pid = newProcess(top, 0, 0, "TOP");
 		} else if (strcmp(c + back, "logout")) {
 			clearThisScreen();
@@ -117,7 +103,6 @@ int shell(int argc, char ** argv) {
 			waitProcess(pid);
 			setForegroundProcess(getMyPID());
 		}
-//		}
 	}
 	return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef _FILESYSTEM_
 #define _FILESYSTEM_
-#
+
+/* File system on disk*/
 
 #define MAX_NAME_LENGHT 56
 #define MAX_OWNER_LENGHT 13
@@ -8,7 +9,8 @@
 #define MAX_OPEN_FILES 200
 #define MAX_BLOCK_QTY 32704
 #define HEADERS 18
-//-------- PERMISSIONS------
+
+/*-------- PERMISSIONS------*/
 #define IS_DIREC 1<<9
 #define USR_RD_PERM 1
 #define USR_WR_PERM 1<<1
@@ -21,13 +23,14 @@
 #define WRL_EX_PERM 1<<8
 #define DIR_PERMS IS_DIREC|USR_RD_PERM|USR_WR_PERM|USR_EX_PERM|GRP_RD_PERM|GRP_EX_PERM|WRL_RD_PERM|WRL_EX_PERM
 #define BLOCK 20
-//----------FLAGS------------
+
+/*----------FLAGS------------*/
 #define O_RDONLY 1
 #define O_WRONLY 1<<1
 #define O_RDWR 1<<2
 #define O_CREATE 1<<3
 
-//---------BITS-------
+/*---------BITS-------*/
 #define BIT0 1
 #define BIT1 1<<1
 #define BIT2 1<<2
@@ -38,7 +41,8 @@
 #define BIT7 1<<7
 #define ALL_USED BIT0|BIT1|BIT2|BIT3|BIT4|BIT5|BIT6|BIT7
 #define UNUSED 0
-//----------WHENCE-----------
+
+/*----------WHENCE-----------*/
 #define SEEK_CUR 1
 #define SEEK_SET 0
 #define SEEK_END 2
@@ -70,14 +74,14 @@ typedef struct {
 	char* read;
 
 } generalHeader;
-//Tamaño 64, se pueden poner 8 por sector.
+/* Size 64, can be put up to 8 per sector */
 
 typedef struct {
 	char name[MAX_NAME_LENGHT];
 	int numSect;
 	int numInode;
 } file;
-//Tamaño 64, 8 por sector.
+/* Size 64, can be put up to 8 per sector */
 
 typedef struct {
 	int sectQty;
@@ -134,7 +138,6 @@ void createNewEntry(char* name, int inodeNumber, int numSect,
 		generalHeader* dir);
 void getNameFromPath(char* path, int* counter, char* name);
 void pwd();
-//generalHeader* duplicateHeader(generalHeader header);
 void refreshSuperBlock();
 generalHeader* searchPathRec(generalHeader* start, char* path, int * counter);
 int getFreeBlocks();
@@ -151,11 +154,8 @@ int getMoreSpace(int pos);
 int readFromFile(int pos, char* buff, int size);
 int ls(int argc, char** arguments);
 int create(char* pathname, int mode, int type);
-
 void initializeFilesystem();
-
 int mkdir(char* pathname);
-
 int creat(char* pathname, int mode);
 int open(char* pathname, int flags, ...);
 void close(int fd);

@@ -1,17 +1,10 @@
-/*
- * fileSystemDiskAtaAdapterImpl.c
- *
- *  Created on: Oct 26, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/diskata.h"
 #include "../../include/AtaDiskAdapter.h"
 #include "../../include/iolib.h"
 
 /*
  * This is an implementatio of the interface proposed by
- * fileSystemDiskAtaAdapter.h. Its aim is to give the user
+ * AtamDiskAdapter.h. Its aim is to give the user
  * the possiblity of writing into disk with an offset and a size
  * smaller thank 512 bytes.
  */

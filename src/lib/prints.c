@@ -9,7 +9,6 @@ int print(char *ascii, int where, unsigned char *dirVideo) {
 		where=scrollOneUp(dirVideo);
 		ret = 1;
 	}
-	//unsigned char *dirVideo = (unsigned char *) 0xB8000;
 	dirVideo[where]=*ascii;
 	dirVideo[where+1]=WHITE_TXT;
 	return ret;
@@ -51,10 +50,10 @@ void printExponent(float number){
 	  putc(STDOUT,'-');
 	  number*=-1;
    }
-   
+
    integer=number;
    decimal=(number-(int)number);
- 
+
 	if(integer>0){
 		while(integer >9){
 		   array[arraySize++]=integer%10;
@@ -152,7 +151,7 @@ void printUnsignedInteger(unsigned int integer) {
 		putc(STDOUT,reverse[arrayPos++]);
 	}
 }
-	
+
 void printHex(long hexa){
 	int reverse[INT_MAX_VALUE/4];
 	int arrayPos=(INT_MAX_VALUE/4)-1;

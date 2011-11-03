@@ -1,6 +1,8 @@
 #ifndef _FILESYSTEM_
 #define _FILESYSTEM_
 
+/* File system in memory, not used*/
+
 #include "defs.h"
 
 #define MAX_LENGHT 255
@@ -11,7 +13,7 @@
 #define MAX_HEIGHT 10
 #define MAX_OPEN_FILES 50
 #define MAX_SIZE_PER_FILE 1024
-//-------- PERMISSIONS------
+/*-------- PERMISSIONS------*/
 #define IS_DIREC 1<<9
 #define USR_RD_PERM 1
 #define USR_WR_PERM 1<<1
@@ -24,13 +26,13 @@
 #define WRL_EX_PERM 1<<8
 #define DIR_PERMS IS_DIREC|USR_RD_PERM|USR_WR_PERM|USR_EX_PERM|GRP_RD_PERM|GRP_EX_PERM|WRL_RD_PERM|WRL_EX_PERM
 #define BLOCK 20
-//----------FLAGS------------
+/*----------FLAGS------------*/
 #define O_RDONLY 1
 #define O_WRONLY 1<<1
 #define O_RDWR 1<<2
 #define O_CREATE 1<<3
 
-//----------WHENCE-----------
+/*----------WHENCE-----------*/
 #define SEEK_CUR 1
 #define SEEK_SET 0
 

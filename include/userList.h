@@ -1,10 +1,3 @@
-/*
- * userList.h
- *
- *  Created on: Oct 29, 2011
- *      Author: mdesanti90
- */
-
 #ifndef USERLIST_H_
 #define USERLIST_H_
 
@@ -21,7 +14,7 @@ typedef struct {
 
 	int elemQty;
 	struct userNode * first;
-}userListHeader;
+} userListHeader;
 
 typedef struct {
 	char * username;
@@ -29,8 +22,13 @@ typedef struct {
 	int perms;
 } userData;
 
+/* Creates list of users*/
 userListHeader * createUserList();
+
+/* Adds user to the list */
 void addUser(userListHeader * uh, char * name, char * pass, int perms);
+
+/* Returns username, password and permissions of user with identified by "name" */
 userData * getUser(userListHeader * uh, char * name);
 
-#endif /* USERLIST_H_ */
+#endif

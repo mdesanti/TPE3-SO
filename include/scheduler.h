@@ -1,10 +1,3 @@
-/*
- * scheduler.h
- *
- *  Created on: Sep 19, 2011
- *      Author: mdesanti90
- */
-
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
@@ -68,8 +61,10 @@ void endProcess();
 /* Returns the terminal in which the process is running */
 int getTTY();
 
+/* Creates shell and returns it's pid*/
 int createShell(int(*proc)(int, char**), int argc, char **argv, int tty);
 
+/* Sleeps process a quantity of seconds "secs" */
 void sleep(int secs);
 
-#endif /* SCHEDULER_H_ */
+#endif

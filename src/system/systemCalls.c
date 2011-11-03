@@ -1,10 +1,3 @@
-/*
- * systemCalls.c
- *
- *  Created on: Oct 25, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/defs.h"
 #include "../../include/iolib.h"
 #include "../../include/terminal.h"
@@ -14,10 +7,68 @@
 #include "../../include/users.h"
 #include "../../include/shell.h"
 #include "../../include/filesystem2.h"
+#include "../../include/handlers.h"
+#include "../../include/systemCalls.h"
 #include "../../include/sem.h"
 
 static int log = 0;
-int logIn(int perm, char ** argv);
+
+void int_80(params * p) {
+
+	if (p->operation == WRITE) {
+		service_Write(p->param4, p->param2);
+	} else if (p->operation == READ) {
+		service_Read(p->param3, p->param2);
+	} else if (p->operation == FORMAT_PROC) {
+		handleFormat();
+	} else if (p->operation == CREATE_PROCESS) {
+		handleCreateProcess(p);
+	} else if (p->operation == BLOCK_PROC) {
+		handleBlockProcess(p);
+	} else if (p->operation == GET_PID) {
+		handleGetPid(p);
+	} else if (p->operation == WAKE_PID) {
+		handleWakeProcess(p);
+	} else if (p->operation == WAIT_PID) {
+		handleWaitProcess(p);
+	} else if (p->operation == YIELD) {
+		handleYield(p);
+	} else if (p->operation == KILL) {
+		handleKill(p);
+	} else if (p->operation == GET_PROCESS_NAME) {
+		handleGetProcessName(p);
+	} else if (p->operation == PASS_MODE) {
+		handlePasswordMode();
+	} else if (p->operation == CANNONICAL_MODE) {
+		handleCannonicalMode();
+	} else if (p->operation == LAST100) {
+		last100Handler(p);
+	} else if (p->operation == SLEEP) {
+		sleepPHandler(p);
+	} else if (p->operation == CLEAR_SCREEN) {
+		clearScreenHandler(p);
+	} else if (p->operation == UP_SEM) {
+		handleUpSem(p);
+	} else if (p->operation == DOWN_SEM) {
+		handleDownSem(p);
+	} else if (p->operation == GET_SEM) {
+		handleGetSem(p);
+	} else {
+		//		It must never get here!
+	}
+}
+
+void service_Write(char *data, int fileDesc) {
+	if (fileDesc == STDOUT) {
+		terminalPrint(data);
+	}
+}
+
+void service_Read(char **data, int fileDesc) {
+	if (fileDesc == STDIN) {
+		(*data) = (char*) getKey();
+	}
+}
 
 int checkUserPerms(int perm) {
 

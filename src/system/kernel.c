@@ -22,7 +22,6 @@ void int_08() {
 
 int kmain() {
 
-
 	/* Borra la pantalla y cursor */
 
 	k_clear_screen((unsigned char *) 0xB8000);
@@ -39,7 +38,6 @@ int kmain() {
 	/*	CARGA LA INT 80H AL IDT */
 	setup_IDT_entry(&idt[0x80], 0x08, (dword) &_int_80_hand, ACS_INT, 0);
 
-
 	/* Loads IDTR */
 
 	idtr.base = 0;
@@ -49,21 +47,15 @@ int kmain() {
 	_lidt(&idtr);
 
 	/* Enables timer tick and keyboard interruption */
-
-
 	_mascaraPIC1(0xFC);
 	_mascaraPIC2(0xFF);
+
 	_Cli();
 	k_clear_screen((unsigned char*) 0xB8000);
+
 	createProcess(init, 0, 0, "Init");
 	_Sti();
-	//while(ENTER!=1);
-	//INT_KEY=0;
 
-	//printf("%f", 2.5); // To solve the FPU/Math coprocessor problem
-
-	//printShell();
-	//callShell();
 	while (1)
 		;
 	return 0;

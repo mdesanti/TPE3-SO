@@ -1,9 +1,4 @@
-/*
- * lib.c
- *
- *  Created on: Sep 19, 2011
- *      Author: mdesanti90
- */
+#include "../../include/lib.h"
 
 int pow(int base, int exp) {
 	int i = 1;

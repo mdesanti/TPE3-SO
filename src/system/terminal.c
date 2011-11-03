@@ -14,16 +14,6 @@
 #include "../../include/kc.h"
 #include "../../include/systemCalls.h"
 
-//int insertShellBuffer = 0;
-//int readShellBuffer = 0;
-//unsigned char shellBuffer[MAX_BUFFER];
-//static unsigned char stringBuffer[MAX_BUFFER];
-///* When enter is pressed, the blocked process is unblocked*/
-//static int cannonical = 1;
-//static uint blockedPID;
-//static int foregroundProcess;
-//extern unsigned char commandsBuffer[10][MAX_BUFFER];
-
 #define NON_PRINT -1
 
 static term terminals[TERM_QTY];
@@ -68,10 +58,8 @@ void sendToTerm(char c) {
 	interrupt = 1;
 	if (UP_ARROW == 1) {
 		UP_ARROW = 0;
-		//displayCommand(UP_DISPLAY);
 	} else if (DOWN_ARROW == 1) {
 		DOWN_ARROW = 0;
-		//displayCommand(DOWN_DISPLAY);
 	} else if ((terminals[tty].cannonical == CANNONICAL
 			|| terminals[tty].cannonical == PASSWORD) && c == '\n') {
 		putc(STDOUT, '\n');
@@ -170,15 +158,15 @@ void terminalPrint(char *data) {
 void switchTerminal() {
 	term * actual = &terminals[tty++];
 	if (tty == TERM_QTY
-	)
+		)
 		tty = 0;
 	term * next = &terminals[tty];
 	char * vid = (char *) 0xB8000;
 	int i = 0;
 	for (i = 0; i < 80 * 25 * 2; i++) {
-		//guardo el video actual
+		//saves actual video
 		actual->video[i] = vid[i];
-		//imprimo la otra terminal
+		//prints new terminal
 		vid[i] = next->video[i];
 	}
 }
@@ -207,27 +195,6 @@ char * getKey(void) {
 	cleanShellBuffer();
 	return ret;
 }
-
-/*void addCommand(char* stringBuffer) {
- int i = 0;
- commandBufferActive = 1; // Actives the command display
- for (i; stringBuffer[i] != '\0' && i < MAX_BUFFER; i++) {
- commandsBuffer[commandToInsert][i] = stringBuffer[i];
- }
- if (i <= (MAX_BUFFER - 1))
- commandsBuffer[commandToInsert][i] = '\0';
-
- commandToInsert++;
- commandToRead = commandToInsert - 1; // Leaves the cursor to read before
- // the last added
-
- if (commandToInsert == MAX_COMMAND_BUFFER) {
- commandToInsert = 0; // Starts inserting from the beginning again
- commandsOverflow = 1; // This flag let's the cursorToRead move
- // without problem when the buffer is full
- }
- prev = NONE;
- }*/
 
 char* getStringInBuffer() {
 	if (terminals[tty].insertShellBuffer == 0) {
@@ -276,3 +243,25 @@ void setUserToTerm(char * userName) {
 void logout() {
 	terminals[getTTY()].user = NULL;
 }
+
+/* Old function from Dinux 1.0 */
+/*void addCommand(char* stringBuffer) {
+ int i = 0;
+ commandBufferActive = 1; // Actives the command display
+ for (i; stringBuffer[i] != '\0' && i < MAX_BUFFER; i++) {
+ commandsBuffer[commandToInsert][i] = stringBuffer[i];
+ }
+ if (i <= (MAX_BUFFER - 1))
+ commandsBuffer[commandToInsert][i] = '\0';
+
+ commandToInsert++;
+ commandToRead = commandToInsert - 1; // Leaves the cursor to read before
+ // the last added
+
+ if (commandToInsert == MAX_COMMAND_BUFFER) {
+ commandToInsert = 0; // Starts inserting from the beginning again
+ commandsOverflow = 1; // This flag let's the cursorToRead move
+ // without problem when the buffer is full
+ }
+ prev = NONE;
+ }*/

@@ -1,7 +1,5 @@
 #include "../../include/kc.h"
 
-//extern int cursorPos;
-
 /***************************************************************
 *k_clear_screen
 *
@@ -10,7 +8,6 @@
 
 void k_clear_screen(unsigned char * vidmem)
 {
-	//char *vidmem = (char *) 0xb8000;
 	unsigned int i=0;
 	while(i < (80*25*2))
 	{
@@ -24,7 +21,6 @@ void k_clear_screen(unsigned char * vidmem)
 int scrollOneUp(unsigned char * dirVideo){
 	int i=0;
 	int j=80*2; // Beggining of second line
-	//unsigned char *dirVideo = (unsigned char *) 0xB8000;
 	while(i<80*24*2){
 		dirVideo[i++]=dirVideo[j++];
 		dirVideo[i++]=dirVideo[j++];
@@ -50,7 +46,7 @@ void cursorOFF(){
 *
 *Recibe: Puntero a elemento de la IDT
 *	 Selector a cargar en el descriptor de interrupcion
-*	 Puntero a rutina de atencion de interrupcion	
+*	 Puntero a rutina de atencion de interrupcion
 *	 Derechos de acceso del segmento
 *	 Cero
 ****************************************************************/

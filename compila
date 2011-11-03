@@ -1,30 +1,22 @@
 cd ./bin
 rm -rf *
-nasm -f aout ../src/libasm.asm -o libasm.o
-nasm -f aout ../src/kstart.asm -o kstart.o
-nasm -f aout ../src/loader.asm -o kstart.o
-
-gcc -c ../src/string.c -fno-stack-protector -o string.o -fno-builtin -Wall
-gcc -c ../src/commands.c -fno-stack-protector -o commands.o -fno-builtin -Wall
-gcc -c ../src/shell.c -fno-stack-protector -o shell.o -fno-builtin -Wall
-
+nasm -f aout ../src/system/libasm.asm -o libasm.o
+nasm -f aout ../src/system/kstart.asm -o kstart.o
+nasm -f aout ../src/system/loader.asm -o kstart.o
 
 gcc -c ../src/system/kernel.c -fno-stack-protector -o kernel.o -fno-builtin -Wall
 gcc -c ../src/system/terminal.c -fno-stack-protector -o terminal.o -fno-builtin -Wall
 gcc -c ../src/system/keyboard.c -fno-stack-protector -o keyboard.o -fno-builtin -Wall
-gcc -c ../src/system/prints.c -fno-stack-protector -o prints.o -fno-builtin -Wall
-gcc -c ../src/system/malloc.c -fno-stack-protector -o malloc.o -fno-builtin -Wall
-gcc -c ../src/system/filesystem2.c -fno-stack-protector -o filesystem.o -fno-builtin -Wall
+
 gcc -c ../src/system/diskata.c -fno-stack-protector -o diskata.o -fno-builtin -Wall
 gcc -c ../src/system/systemCalls.c -fno-stack-protector -o systemCalls.o -fno-builtin -Wall
 gcc -c ../src/system/AtaDiskAdapterImpl.c -fno-stack-protector -o AtaDiskAdapterImpl.o -fno-builtin -Wall
 gcc -c ../src/system/users.c -fno-stack-protector -o users.o -fno-builtin -Wall
 gcc -c ../src/system/sem.c -fno-stack-protector -o sem.o -fno-builtin -Wall
-
-
+gcc -c ../src/system/commands.c -fno-stack-protector -o commands.o -fno-builtin -Wall
 
 gcc -c ../src/scheduler/scheduler.c -fno-stack-protector -o scheduler.o -fno-builtin -Wall
-
+gcc -c ../src/filesystem/filesystem2.c -fno-stack-protector -o filesystem.o -fno-builtin -Wall
 
 gcc -c ../src/process/processA.c -fno-stack-protector -o processA.o -fno-builtin -Wall
 gcc -c ../src/process/processB.c -fno-stack-protector -o processB.o -fno-builtin -Wall
@@ -36,7 +28,7 @@ gcc -c ../src/process/processG.c -fno-stack-protector -o processG.o -fno-builtin
 gcc -c ../src/process/idle.c -fno-stack-protector -o idle.o -fno-builtin -Wall
 gcc -c ../src/process/init.c -fno-stack-protector -o init.o -fno-builtin -Wall
 gcc -c ../src/process/cat.c -fno-stack-protector -o cat.o -fno-builtin -Wall
-
+gcc -c ../src/process/shell.c -fno-stack-protector -o shell.o -fno-builtin -Wall
 
 gcc -c ../src/lib/libc.c -fno-stack-protector  -o libc.o -fno-builtin -Wall
 gcc -c ../src/lib/buffer.c -fno-stack-protector -o buffer.o -fno-builtin -Wall
@@ -45,7 +37,9 @@ gcc -c ../src/lib/sleepQueue.c -fno-stack-protector -o sleepQueue.o -fno-builtin
 gcc -c ../src/lib/priorityQueue.c -fno-stack-protector -o priorityQueue.o -fno-builtin -Wall
 gcc -c ../src/lib/lib.c -fno-stack-protector -o lib.o -fno-builtin -Wall
 gcc -c ../src/lib/userList.c -fno-stack-protector -o userList.o -fno-builtin -Wall
+gcc -c ../src/lib/string.c -fno-stack-protector -o string.o -fno-builtin -Wall
+gcc -c ../src/lib/prints.c -fno-stack-protector -o prints.o -fno-builtin -Wall
+gcc -c ../src/lib/malloc.c -fno-stack-protector -o malloc.o -fno-builtin -Wall
 
 
-
-ld -T ../src/link.ld -o kernel.bin kernel.o kstart.o libc.o libasm.o keyboard.o buffer.o iolib.o terminal.o string.o commands.o prints.o scheduler.o processA.o processB.o processC.o idle.o malloc.o filesystem.o sleepQueue.o priorityQueue.o lib.o shell.o diskata.o processD.o init.o systemCalls.o AtaDiskAdapterImpl.o users.o userList.o cat.o sem.o processE.o processF.o processG.o
+ld -T ../src/system/link.ld -o kernel.bin kernel.o kstart.o libc.o libasm.o keyboard.o buffer.o iolib.o terminal.o string.o commands.o prints.o scheduler.o processA.o processB.o processC.o idle.o malloc.o filesystem.o sleepQueue.o priorityQueue.o lib.o shell.o diskata.o processD.o init.o systemCalls.o AtaDiskAdapterImpl.o users.o userList.o cat.o sem.o processE.o processF.o processG.o

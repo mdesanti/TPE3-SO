@@ -1,14 +1,6 @@
-/*
- * sleepQueue.c
- *
- *  Created on: Oct 12, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/sleepQueue.h"
 #include "../../include/defs.h"
 #include "../../include/malloc.h"
-
 
 static node * addElemR(sleepQueue * sq, int id, int time, node * actual);
 
@@ -36,8 +28,7 @@ node * addElemR(sleepQueue * sq, int id, int time, node * actual) {
 
 	if (actual == NULL || time < actual->time) {
 		node * n = (node*) Malloc(sizeof(node));
-		if (actual != NULL
-		)
+		if (actual != NULL)
 			actual->time -= time;
 		n->time = time;
 		n->id = id;

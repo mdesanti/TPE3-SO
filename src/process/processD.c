@@ -1,13 +1,6 @@
-/*
- * processD.c
- *
- *  Created on: Oct 21, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/iolib.h"
 #include "../../include/string.h"
-#include "../../include/test.h"
+#include "../../include/process.h"
 #include "../../include/systemCalls.h"
 #include "../../include/filesystem2.h"
 #include "../../include/diskata.h"
@@ -24,7 +17,7 @@ int procD(int argc, char ** argv) {
 	char rd[21];
 
 	if ((fd = open("dinux/test2.txt", O_RDONLY)) == -1)
-		printf("ERROR EN ABRIR ESCRITURA\n");
+		printf("Error en abrir Escritura\n");
 
 	size = Read(fd, rd, 20);
 	printf("%s\n", rd);

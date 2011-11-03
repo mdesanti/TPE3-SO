@@ -1,10 +1,3 @@
-/*
- * scheduler.c
- *
- *  Created on: Sep 20, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/scheduler.h"
 #include "../../include/calls.h"
 #include "../../include/iolib.h"
@@ -16,12 +9,8 @@
 #include "../../include/kasm.h"
 #include "../../include/string.h"
 #include "../../include/top.h"
-/*
- * scheduler.c
- *
- *  Created on: Sep 20, 2011
- *      Author: mdesanti90
- */
+
+/* Implementation of scheduler with round robin */
 
 /* PID indicator*/
 static uint pid = 1;
@@ -62,9 +51,16 @@ static int artificial = 0;
 /* Sleeping process queue*/
 static sleepQueue * sq;
 
+/* Creates process idle */
 static void createIDLE(int(*process)(int, char**), int argc, char **argv);
+
+/* Returns process with identified by pid */
 static process * getProcessByPID(int pid);
+
+/* Wakes up processes that were blocked waiting for process identified by pid */
 static void wakeProcessWaitingFor(int pid);
+
+/* Initialize false context */
 static void createFalseContext(context * cxt, int(*process)(int, char**),
 		int argc, char **argv);
 
@@ -332,7 +328,8 @@ int getFD(int inode, int flags) {
 
 int getPos(int fd) {
 	int ret = -1;
-	if (actual->files[fd].fd != -1 && fd < MAX_FILES)
+	if (actual->files[fd].fd != -1 && fd < MAX_FILES
+		)
 		ret = actual->files[fd].fd;
 	return ret;
 }
@@ -377,4 +374,3 @@ int top(int argc, char ** argv) {
 	}
 	return 0;
 }
-

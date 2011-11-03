@@ -1,14 +1,18 @@
 #include "../../include/diskata.h"
+#include "../../include/sem.h"
+#include "../../include/systemCalls.h"
 #include "../../include/filesystem2.h"
 #include "../../include/string.h"
 #include "../../include/malloc.h"
 #include "../../include/terminal.h"
 #include "../../include/iolib.h"
 #include "../../include/users.h"
-#include <stdarg.h>
 #include "../../include/AtaDiskAdapter.h"
 #include "../../include/lib.h"
-#include "../../include/systemCalls.h"
+#include <stdarg.h>
+
+/* Implementation of file system on disk */
+
 #define NULL 0
 
 superBlock filesys;
@@ -16,7 +20,7 @@ generalHeader* root;
 
 generalHeader* actDir;
 openFilesTable table;
-char clean[250 * 512] = { 0 };
+char clean[250 * 512] = {0};
 
 static int wrFifoSem = -1;
 static int rdFifoSem = -1;
@@ -26,8 +30,7 @@ void initializeFilesystem() {
 	int i;
 	printf("Checking if filesystem already exists...\n");
 	//	for disk cleaning
-//	diskWrite(clean, 200 * 512, 3, 0);
-//	diskWrite(clean, 200 * 512, 203, 0);
+	//cleanDisk();
 
 	if (existsFilesystem()) {
 		printf("Loading SuperBlock...\n");
@@ -190,11 +193,13 @@ int create(char* pathname, int mode, int type) {
 			return createDir(name, prev);
 		case FIFO:
 
-			if (mode & IS_DIREC)
+			if (mode & IS_DIREC
+			)
 				return -1;
 			return createFifo(name, prev, mode);
 		case FILE:
-			if (mode & IS_DIREC)
+			if (mode & IS_DIREC
+			)
 				return -1;
 
 			return createFile(name, mode, prev);
@@ -231,8 +236,8 @@ generalHeader* getHeader(generalHeader* parent, char* name) {
 	int k = 0;
 	for (i = 0; k < parent->cantFiles && cantSects < 8; i++, pos++, k++) {
 		if (i % FILES_PER_SECTOR == 0) {
-			diskRead((char*) files, SECTOR_SIZE,
-					(parent->dataSect) + cantSects, 0);
+			diskRead((char*) files, SECTOR_SIZE, (parent->dataSect) + cantSects,
+					0);
 			cantSects++;
 			pos = 0;
 		}
@@ -249,15 +254,16 @@ generalHeader* getHeader(generalHeader* parent, char* name) {
 generalHeader* searchHeader(int numSect, int numInode) {
 
 	generalHeader* header = Malloc(sizeof(generalHeader));
-	diskRead((char*) header, sizeof(generalHeader), numSect, (numInode % 8)
-			* sizeof(generalHeader));
+	diskRead((char*) header, sizeof(generalHeader), numSect,
+			(numInode % 8) * sizeof(generalHeader));
 	return header;
 
 }
 
 int createDir(char* name, generalHeader* prev) {
 	generalHeader new;
-	if (prev->type != DIR)
+	if (prev->type != DIR
+	)
 		return -1;
 	createNewHeader(&new, name, prev, DIR, DIR_PERMS);
 
@@ -290,10 +296,10 @@ void createNewHeader(generalHeader* newHeader, char* name, generalHeader* prev,
 	newHeader->inodeNumber = getHeaderInode();
 	newHeader->numSect = getHeaderSect(newHeader->inodeNumber);
 	newHeader->cantFiles = type == DIR ? 2 : 0;
-	newHeader->realSize = sizeof(generalHeader) + newHeader->cantFiles
-			* sizeof(file);
-	newHeader->diskSize = sizeof(generalHeader) + newHeader->cantFiles
-			* sizeof(file);
+	newHeader->realSize = sizeof(generalHeader)
+			+ newHeader->cantFiles * sizeof(file);
+	newHeader->diskSize = sizeof(generalHeader)
+			+ newHeader->cantFiles * sizeof(file);
 	newHeader->write = NULL;
 	newHeader->read = NULL;
 	newHeader->type = type;
@@ -301,7 +307,8 @@ void createNewHeader(generalHeader* newHeader, char* name, generalHeader* prev,
 	if (newHeader->dataSect == -1) {
 		return;
 	}
-	if (type == FILE)
+	if (type == FILE
+	)
 		initializeDataSect(newHeader->dataSect);
 	writeHeaderToDisk(newHeader);
 	return;
@@ -388,7 +395,8 @@ int getFilePos(generalHeader* dir) {
 	int k = 0;
 	for (i = 0; k < dir->cantFiles && cantSects < 7; i++, pos++, k++) {
 		if (i % FILES_PER_SECTOR == 0) {
-			diskRead((char*) files, SECTOR_SIZE, (dir->dataSect) + cantSects, 0);
+			diskRead((char*) files, SECTOR_SIZE, (dir->dataSect) + cantSects,
+					0);
 			cantSects++;
 			pos = 0;
 		}
@@ -457,7 +465,8 @@ generalHeader* searchPathRec(generalHeader* start, char* path, int * counter) {
 
 	resp = getHeader(start, name);
 
-	if (resp == NULL)
+	if (resp == NULL
+	)
 		return NULL;
 	if (path[*counter] == '\0')
 		return resp;
@@ -472,8 +481,8 @@ int ls(int argc, char** arguments) {
 		printf("Wrong ls arguments1\n");
 		return 0;
 	}
-	if (arguments[0][2] != '\0' && (arguments[0][3] != '-' || arguments[0][4]
-			!= 'a')) {
+	if (arguments[0][2] != '\0'
+			&& (arguments[0][3] != '-' || arguments[0][4] != 'a')) {
 		printf("Wrong ls arguments2\n");
 		return 0;
 	}
@@ -492,7 +501,8 @@ int cd(int argc, char** argument) {
 		i++;
 	}
 	generalHeader* resp = searchPath(&(arg[i]));
-	if (resp == NULL || resp->type != DIR)
+	if (resp == NULL || resp->type != DIR
+	)
 		return -1;
 	actDir = resp;
 
@@ -512,7 +522,7 @@ int open(char* path, int flags, ...) {
 	if (file == NULL) {
 
 		if (!(flags & O_CREATE))
-			return -1;
+		return -1;
 		else {
 			va_list list;
 			va_start(list, flags);
@@ -551,7 +561,7 @@ int readFromFile(int pos, char* buff, int size) {
 	for (i = 0; i < size; i++) {
 		if (table.openFiles[pos].pos == SECTOR_SIZE)
 		{
-//			printf("ESTOY LEYENDO DEL SECTOR %d\n",
+//			printf("Reading sector %d\n",
 //					table.openFiles[pos].currSector);
 			if (!getNewBuffer(pos)) {
 				buff[i] = '\0';
@@ -604,7 +614,7 @@ int writeInFile(int pos, char* buff, int size) {
 		if (table.openFiles[pos].pos == SECTOR_SIZE) {
 			writeBuffToDisk(pos);
 			if (!getNewBuffer(pos)) {
-//				printf("ESTOY ESCRIBIENDO EN %d\n",
+//				printf("Writing sector %d\n",
 //						table.openFiles[pos].currSector);
 				getMoreSpace(pos);
 			}
@@ -619,7 +629,6 @@ int writeInFile(int pos, char* buff, int size) {
 	writeBuffToDisk(pos);
 	return size;
 }
-
 
 void writeBuffToDisk(int pos) {
 	diskWrite(table.openFiles[pos].header.data, SECTOR_SIZE,
@@ -734,7 +743,7 @@ int createFile(char* name, int mode, generalHeader* parent) {
 
 	createNewEntry(name, newFile.inodeNumber, newFile.numSect, parent);
 	int fd = getFD(openTheFile(newFile.inodeNumber, slot, &newFile, O_RDWR),
-			O_RDWR);
+	O_RDWR);
 
 	return fd;
 
@@ -742,7 +751,8 @@ int createFile(char* name, int mode, generalHeader* parent) {
 
 int openTheFile(int inode, int slot, generalHeader* file, int flag) {
 
-	if (file->type == DIR)
+	if (file->type == DIR
+	)
 		return -1;
 	int found = 0;
 	if (slot != -1) {
@@ -756,12 +766,13 @@ int openTheFile(int inode, int slot, generalHeader* file, int flag) {
 			(table.openFiles[i].counter)++;
 			if (file->type == FIFO) {
 
-				table.openFiles[i].pidReader = flag & O_RDONLY ? getPID()
-						: flag & O_RDWR ? getPID()
-								: table.openFiles[i].pidReader;
+				table.openFiles[i].pidReader =
+						flag & O_RDONLY ? getPID() :
+						flag & O_RDWR ? getPID() : table.openFiles[i].pidReader;
 
-				table.openFiles[i].pidWriter = ((flag & O_WRONLY) || (flag
-						& O_RDWR)) ? getPID() : table.openFiles[i].pidWriter;
+				table.openFiles[i].pidWriter =
+						((flag & O_WRONLY) || (flag & O_RDWR)) ?
+								getPID() : table.openFiles[i].pidWriter;
 
 				if (table.openFiles[i].pidWriter != -1 && wrFifoSem == -1) {
 					wrFifoSem = getSem(0);
@@ -812,22 +823,22 @@ void newOpenFile(int inode, generalHeader* file, int pos, int flag) {
 	}
 
 	if (file->type == FIFO) {
-		table.openFiles[pos].pidReader = flag & O_RDONLY ? getPID() : flag
-				& O_RDWR ? getPID() : -1;
+		table.openFiles[pos].pidReader = flag & O_RDONLY ? getPID() :
+											flag & O_RDWR ? getPID() : -1;
 
 	}
 
 	if (file->type == FIFO) {
-		table.openFiles[pos].pidWriter
-				= ((flag & O_WRONLY) || (flag & O_RDWR)) ? getPID() : -1;
+		table.openFiles[pos].pidWriter =
+				((flag & O_WRONLY) || (flag & O_RDWR)) ? getPID() : -1;
 
 	}
 	table.openFiles[pos].pos = file->type == FIFO ? 0 : 8;
 	table.openFiles[pos].pos2 = 0;
-	table.openFiles[pos].sectorQty
-			= ((fragSector*) table.openFiles[pos].header.data)->sectQty;
-	table.openFiles[pos].nextSector
-			= ((fragSector*) table.openFiles[pos].header.data)->nextSect;
+	table.openFiles[pos].sectorQty =
+			((fragSector*) table.openFiles[pos].header.data)->sectQty;
+	table.openFiles[pos].nextSector =
+			((fragSector*) table.openFiles[pos].header.data)->nextSect;
 	table.openFiles[pos].currSector = table.openFiles[pos].header.dataSect;
 	table.openFiles[pos].firstSector = table.openFiles[pos].header.dataSect;
 
@@ -884,27 +895,21 @@ void printHeader(generalHeader* header) {
 	printf("Group:%s  ", header->group);
 	printf("Owner:%s\n", header->owner);
 	printf("P:%d ", header->permissions);
-	//printf("%d\n", header->data);
-	//printf("%d\n", header->realSize);
-	//printf("%d\n", header->diskSize);
 	printf("NSect:%d ", header->numSect);
 	printf("DSect:%d  ", header->dataSect);
 	printf("#Files:%d  ", header->cantFiles);
 	printf("#Inode: %d ", header->inodeNumber);
-	//printf("%d\n", header->read);
-	//printf("%d\n", header->write);
 	printf("Type:%d\n", header->type);
 }
 
 void printFile(file* file) {
 	printf("%s  \n", file->name);
-	//	printf("%d  ", file->numSect);
-	//	printf("%d\n", file->numInode);
 }
 
 int createFifo(char* name, generalHeader* prev, int perms) {
 	generalHeader new;
-	if (prev->type != DIR)
+	if (prev->type != DIR
+	)
 		return -1;
 	createNewHeader(&new, name, prev, FIFO, perms);
 	if (new.dataSect == -1)
@@ -938,8 +943,8 @@ void listDirFiles(generalHeader* dir, int showAll) {
 			k--;
 		} else {
 			if (showAll) {
-				printPermissions(searchHeader(files[pos].numSect,
-						files[pos].numInode));
+				printPermissions(
+						searchHeader(files[pos].numSect, files[pos].numInode));
 				printFile(&files[pos]);
 			} else {
 				if (!startsWith(files[pos].name, 1, "."))
@@ -953,43 +958,53 @@ void listDirFiles(generalHeader* dir, int showAll) {
 }
 
 void printPermissions(generalHeader* inode) {
-	if (inode->permissions & IS_DIREC)
+	if (inode->permissions & IS_DIREC
+	)
 		printf("d");
 	else
 		printf("-");
-	if (inode->permissions & USR_RD_PERM)
+	if (inode->permissions & USR_RD_PERM
+	)
 		printf("r");
 	else
 		printf("-");
-	if (inode->permissions & USR_WR_PERM)
+	if (inode->permissions & USR_WR_PERM
+	)
 		printf("w");
 	else
 		printf("-");
-	if (inode->permissions & USR_EX_PERM)
+	if (inode->permissions & USR_EX_PERM
+	)
 		printf("x");
 	else
 		printf("-");
-	if (inode->permissions & GRP_RD_PERM)
+	if (inode->permissions & GRP_RD_PERM
+	)
 		printf("r");
 	else
 		printf("-");
-	if (inode->permissions & GRP_WR_PERM)
+	if (inode->permissions & GRP_WR_PERM
+	)
 		printf("w");
 	else
 		printf("-");
-	if (inode->permissions & GRP_EX_PERM)
+	if (inode->permissions & GRP_EX_PERM
+	)
 		printf("x");
 	else
 		printf("-");
-	if (inode->permissions & WRL_RD_PERM)
+	if (inode->permissions & WRL_RD_PERM
+	)
 		printf("r");
 	else
 		printf("-");
-	if (inode->permissions & WRL_WR_PERM)
+	if (inode->permissions & WRL_WR_PERM
+	)
 		printf("w");
 	else
 		printf("-");
-	if (inode->permissions & WRL_EX_PERM)
+	if (inode->permissions & WRL_EX_PERM
+	)
 		printf("x");
 	else
 		printf("-");
@@ -1088,8 +1103,9 @@ int rm(int unused, char** arguments) {
 		recursive = 0;
 	} else {
 		recursive = 1;
-		if (pathname[i + 1] == '-' && startsWith(&(pathname[i + 2]), strlen(
-				"recursive"), "recursive")) {
+		if (pathname[i + 1] == '-'
+				&& startsWith(&(pathname[i + 2]), strlen("recursive"),
+						"recursive")) {
 			//move to path
 			while (pathname[i] != ' ')
 				i++;
@@ -1145,18 +1161,17 @@ void deleteChilds(generalHeader* deleteFrom) {
 	int k = 0;
 	for (i = 0; k < deleteFrom->cantFiles && cantSects < 8; i++, pos++, k++) {
 		if (i % FILES_PER_SECTOR == 0) {
-			diskRead((char*) &files, SECTOR_SIZE, (deleteFrom->dataSect)
-					+ cantSects, 0);
+			diskRead((char*) &files, SECTOR_SIZE,
+					(deleteFrom->dataSect) + cantSects, 0);
 			cantSects++;
 			pos = 0;
 		}
 		if (files[pos].numInode == -1) {
 			k--;
-		} else if (/*files[pos].numSect != -1 &&*/!strcmp(".", files[pos].name)
+		} else if (!strcmp(".", files[pos].name)
 				&& !strcmp("..", files[pos].name)) {
-			diskRead((char*) &header, sizeof(generalHeader),
-					files[pos].numSect, sizeof(generalHeader)
-							* (files[pos].numInode % 8));
+			diskRead((char*) &header, sizeof(generalHeader), files[pos].numSect,
+					sizeof(generalHeader) * (files[pos].numInode % 8));
 			newStart[0] = &header;
 			recursiveDelete(newStart);
 
@@ -1180,8 +1195,8 @@ void deleteHeader(generalHeader* toDelete) {
 
 	deleteDataFromFile(toDelete);
 
-	filesys.headers[toDelete->inodeNumber / 8] -= pow(2, (toDelete->inodeNumber
-			% 8));
+	filesys.headers[toDelete->inodeNumber / 8] -= pow(2,
+			(toDelete->inodeNumber % 8));
 	filesys.inodesQty--;
 	refreshSuperBlock();
 }
@@ -1236,8 +1251,8 @@ int deleteEntry(generalHeader* dir, int childInode) {
 			files[pos].numInode = -1;
 			dir->cantFiles--;
 			writeHeaderToDisk(dir);
-			diskWrite((char*) &files, SECTOR_SIZE, (dir->dataSect) + cantSects
-					- 1, 0);
+			diskWrite((char*) &files, SECTOR_SIZE,
+					(dir->dataSect) + cantSects - 1, 0);
 			if (files[pos].numSect == -1)
 				return 0;
 			return 1;
@@ -1290,7 +1305,8 @@ int writeInFifo(int pos, char* buff, int size) {
 		table.openFiles[pos].header.write[table.openFiles[pos].pos2] = buff[i];
 		table.openFiles[pos].pos2++;
 
-		if (table.openFiles[pos].pos2 == 4 * SECTOR_SIZE)
+		if (table.openFiles[pos].pos2 == 4 * SECTOR_SIZE
+		)
 			table.openFiles[pos].pos2 = 0;
 		up_Sem(wrFifoSem, 1);
 	}
@@ -1313,7 +1329,8 @@ int readFromFifo(int pos, char* buff, int size) {
 		}
 		buff[i] = c;
 		table.openFiles[pos].pos++;
-		if (table.openFiles[pos].pos == 4 * SECTOR_SIZE)
+		if (table.openFiles[pos].pos == 4 * SECTOR_SIZE
+		)
 			table.openFiles[pos].pos = 0;
 		down_Sem(wrFifoSem, 1);
 

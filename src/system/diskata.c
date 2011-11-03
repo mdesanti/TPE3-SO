@@ -2,6 +2,8 @@
 #include "../../include/kasm.h"
 #include "../../include/iolib.h"
 
+/* Driver taken from Cristian Pereyra, Maximo Videla and Agustin Marseillan */
+
 #define BIT0 1
 #define BIT1 1<<1
 #define BIT2 1<<2

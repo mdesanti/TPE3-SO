@@ -1,10 +1,3 @@
-/*
- * users.c
- *
- *  Created on: Oct 28, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/filesystem2.h"
 #include "../../include/string.h"
 #include "../../include/iolib.h"
@@ -47,14 +40,6 @@ void createDefaultUsers() {
 
 	close(fd2);
 
-//	char ** argv = Malloc(2);
-//	char username[8] = "mdesanti";
-//	char password[5] = "12345";
-//	int perms = 1;
-//	argv[0] = username;
-//	argv[1] = password;
-
-//	createNewUser(perms, argv);
 }
 
 void readDefaultUsers() {
@@ -118,8 +103,7 @@ int getPerms(char * str, int index, int top) {
 
 int getUserPerm(char * user) {
 	userData * ud = getUser(userList, user);
-	if (ud == NULL
-	)
+	if (ud == NULL)
 		return -1;
 	return ud->perms;
 }
@@ -127,8 +111,7 @@ int getUserPerm(char * user) {
 int validUserAndPass(char * user, char * pass) {
 	userData * ud = getUser(userList, user);
 
-	if (ud == NULL
-	)
+	if (ud == NULL)
 		return 0;
 
 	return strcmp(pass, ud->pass);
@@ -149,9 +132,9 @@ int createNewUser(int argc, char ** argv) {
 	char aux, read;
 	int fd, wr = 0, other = 0;
 	int size;
-	char write[MAX_NAME_LENGHT * 2];while
-(	username[other] != '\0')
-	write[wr++] = username[other++];
+	char write[MAX_NAME_LENGHT * 2];
+	while (username[other] != '\0')
+		write[wr++] = username[other++];
 	write[wr++] = '#';
 	other = 0;
 	while (password[other] != '\0')

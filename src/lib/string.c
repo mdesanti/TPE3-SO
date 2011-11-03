@@ -1,4 +1,4 @@
-#include "../include/string.h"
+#include "../../include/string.h"
 
 int startsWith(char * source, int length, char * comp) {
 	int i = 0;

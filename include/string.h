@@ -18,6 +18,7 @@ int toInteger(char* array, int arraySize);
 /* Calculates the lenght of a String*/
 int strlen(char* s);
 
+/* Returns 1 if source stars with comp in the first "length" places */
 int startsWith(char * source, int length, char * comp);
 
 #endif

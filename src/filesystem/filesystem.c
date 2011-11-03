@@ -7,6 +7,8 @@
 #include "../../include/string.h"
 #include <stdarg.h>
 
+/* Implementation of file system in memory */
+
 #define NULL 0
 
 void pwd() {
@@ -17,7 +19,8 @@ void pwd() {
 int cd(char* argument) {
 
 	Inode* resp = searchPath(argument);
-	if (resp == NULL)
+	if (resp == NULL
+		)
 		return -1;
 	sys->actualDir = resp;
 
@@ -168,7 +171,8 @@ Inode* searchPathRec(Inode* start, char* path, int * counter) {
 
 	resp = getInode(start, name);
 
-	if (resp == NULL)
+	if (resp == NULL
+		)
 		return NULL;
 	if (path[*counter] == '\0')
 		return resp;
@@ -218,43 +222,53 @@ void printFiles(Inode* inode) {
 
 void printPermissions(Inode* inode) {
 	printf("Los permisos de acceso son: \n");
-	if (inode->accPermission & IS_DIREC)
+	if (inode->accPermission & IS_DIREC
+		)
 		printf("d");
 	else
 		printf("-");
-	if (inode->accPermission & USR_RD_PERM)
+	if (inode->accPermission & USR_RD_PERM
+		)
 		printf("r");
 	else
 		printf("-");
-	if (inode->accPermission & USR_WR_PERM)
+	if (inode->accPermission & USR_WR_PERM
+		)
 		printf("w");
 	else
 		printf("-");
-	if (inode->accPermission & USR_EX_PERM)
+	if (inode->accPermission & USR_EX_PERM
+		)
 		printf("x");
 	else
 		printf("-");
-	if (inode->accPermission & GRP_RD_PERM)
+	if (inode->accPermission & GRP_RD_PERM
+		)
 		printf("r");
 	else
 		printf("-");
-	if (inode->accPermission & GRP_WR_PERM)
+	if (inode->accPermission & GRP_WR_PERM
+		)
 		printf("w");
 	else
 		printf("-");
-	if (inode->accPermission & GRP_EX_PERM)
+	if (inode->accPermission & GRP_EX_PERM
+		)
 		printf("x");
 	else
 		printf("-");
-	if (inode->accPermission & WRL_RD_PERM)
+	if (inode->accPermission & WRL_RD_PERM
+		)
 		printf("r");
 	else
 		printf("-");
-	if (inode->accPermission & WRL_WR_PERM)
+	if (inode->accPermission & WRL_WR_PERM
+		)
 		printf("w");
 	else
 		printf("-");
-	if (inode->accPermission & WRL_EX_PERM)
+	if (inode->accPermission & WRL_EX_PERM
+		)
 		printf("x");
 	else
 		printf("-");
@@ -383,24 +397,24 @@ int open(char* pathname, int flags, ...) {
 	int perms;
 	int fd;
 	//CHECKEAR PERMISOS
-	Inode* file = searchPath(pathname);
-	if (file == NULL) {
-		if (!(flags & O_CREATE))
+		Inode* file = searchPath(pathname);
+		if (file == NULL) {
+			if (!(flags & O_CREATE))
 			return -1;
-		else {
-			va_list list;
-			va_start(list, flags);
-			perms=va_arg(list,int);
+			else {
+				va_list list;
+				va_start(list, flags);
+				perms=va_arg(list,int);
 
-			if ((fd = creat(pathname, perms)) == -1)
+				if ((fd = creat(pathname, perms)) == -1)
 				return -1;
-			file = sys->inodes[sys->inodesQty - 1];
-			return fd;
+				file = sys->inodes[sys->inodesQty - 1];
+				return fd;
+			}
 		}
+		fd = getFD(openFile(file->inodeNumber));
+		return fd;
 	}
-	fd = getFD(openFile(file->inodeNumber));
-	return fd;
-}
 
 void printOpenFiles() {
 	printf("PRINTING OPEN FILES\n");

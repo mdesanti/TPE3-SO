@@ -7,36 +7,36 @@
  * shell removes it immediately */
 
 static unsigned char buffer[MAX_BUFFER];
-static int toRead=0; // Position to Read
-static int toInsert=0;	// Position to Insert
+static int toRead = 0; // Position to Read
+static int toInsert = 0; // Position to Insert
 static int bufferRealSize;
 
-int addKey(unsigned char c){
-	if(bufferIsEmpty()==1){
-		buffer[toInsert++]=c;
-		if(toInsert==MAX_BUFFER){
-				toInsert=0;
+int addKey(unsigned char c) {
+	if (bufferIsEmpty() == 1) {
+		buffer[toInsert++] = c;
+		if (toInsert == MAX_BUFFER) {
+			toInsert = 0;
 		}
 		bufferRealSize++;
 		return 1;
-	}else
+	} else
 		return 0;
 }
 
-int bufferIsFull(){
-	return (bufferSize()==MAX_BUFFER);
+int bufferIsFull() {
+	return (bufferSize() == MAX_BUFFER);
 }
 
-int bufferIsEmpty(){
-	return bufferRealSize==0;
+int bufferIsEmpty() {
+	return bufferRealSize == 0;
 }
 
-void clearBuffer(){
-	toRead=0;
-	toInsert=0;
-	bufferRealSize=0;
+void clearBuffer() {
+	toRead = 0;
+	toInsert = 0;
+	bufferRealSize = 0;
 }
 
-int bufferSize(){ 
+int bufferSize() {
 	return bufferRealSize;
 }

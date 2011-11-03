@@ -1,10 +1,3 @@
-/*
- * scheduler2.c
- *
- *  Created on: Oct 12, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/scheduler.h"
 #include "../../include/calls.h"
 #include "../../include/iolib.h"
@@ -16,6 +9,8 @@
 #include "../../include/string.h"
 #include "../../include/sleepQueue.h"
 #include "../../include/priorityQueue.h"
+
+/* Implementation of scheduler with priorities */
 
 /* Process array */
 static process p[PROCESS_QTY];
@@ -62,9 +57,13 @@ static sleepQueue * sq;
 
 /* Indicates whether a call to int08 was made by the PIC or called by the kernel */
 static int artificial = 0;
-
+/* Creates process idle */
 void createIDLE(int(*process)(int, char**), int argc, char **argv);
+
+/* Inserts a new process into the array of blocked processes */
 static void insertIntoBlocked(process * p);
+
+/* Wakes up processes that were blocked waiting for process identified by pid */
 static void wakeProcessWaitingFor(int pid);
 
 void _saveContext(uint esp) {

@@ -1,12 +1,6 @@
-/*
- * processB.c
- *
- *  Created on: Sep 21, 2011
- *      Author: matias
- */
 #include "../../include/iolib.h"
 #include "../../include/string.h"
-#include "../../include/test.h"
+#include "../../include/process.h"
 #include "../../include/systemCalls.h"
 #include "../../include/filesystem2.h"
 #include "../../include/diskata.h"

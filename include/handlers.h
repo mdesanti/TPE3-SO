@@ -1,12 +1,7 @@
-/*
- * aux.h
- *
- *  Created on: Oct 25, 2011
- *      Author: mdesanti90
- */
+#ifndef HANDLERS_H_
+#define HANDLERS_H_
 
-#ifndef AUX_H_
-#define AUX_H_
+/** Handlers for system calls **/
 
 void handleCreateProcess(params * in);
 
@@ -42,4 +37,4 @@ void handleUpSem(params * p);
 
 void handleGetSem(params * p);
 
-#endif /* AUX_H_ */
+#endif

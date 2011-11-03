@@ -1,13 +1,8 @@
-/*
- * init.h
- *
- *  Created on: Oct 21, 2011
- *      Author: mdesanti90
- */
-
 #ifndef INIT_H_
 #define INIT_H_
 
+/* Main of process init */
+
 int init(int argc, char ** argv);
 
-#endif /* INIT_H_ */
+#endif

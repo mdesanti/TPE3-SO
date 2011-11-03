@@ -26,31 +26,42 @@ char* getStringInBuffer();
  * that command. If not, an error message is printed. Also adds the
  *  command to the commands buffer, if a command is not repetead*/
 int shell(int argc, char ** argv);
- 
- /* Adds what is in the shell to te commands buffer */
+
+/* Adds what is in the shell to te commands buffer */
 void addCommand(char *stringBuffer);
 
 char * read(int fileDesc);
 
+/* Sets the process identified with PID in the actual terminal to run in foreground */
 void setForegroundProcess(int PID);
 
+/* Creates shells and initialize terminals */
 void initTerms();
 
+/* Returns the actual terminal */
 int getActualTTY();
 
+/* Switchs to another terminal */
 void switchTerminal();
 
+/* Prints data into the terminal */
 void terminalPrint(char *data);
 
+/* Returns data in the terminal buffer */
 char * getKey(void);
 
+/* Returns the name of the user logged in the terminal */
 char * getTTYUser();
 
+/* Logs out user from terminal */
 void logout();
 
+/* Sets new user to terminal */
 void setUserToTerm(char * userName);
 
-enum termType {CANNONICAL = 0, PASSWORD = 1};
+enum termType {
+	CANNONICAL = 0, PASSWORD = 1
+};
 
 typedef struct {
 	char shellBuffer[MAX_BUFFER];
@@ -62,12 +73,8 @@ typedef struct {
 	uint blockedPID;
 	int foregroundProcess;
 	int cursorPos;
-	unsigned char video[80 * 25 * 2];
-	char * user;
+	unsigned char video[80 * 25 * 2];char * user;
 	int permissions;
-//extern unsigned char commandsBuffer[10][MAX_BUFFER];
 } term;
-
-
 
 #endif

@@ -18,5 +18,5 @@ int bufferSize();
 
 /*Clears the buffer*/
 void clearBuffer();
- 
+
 #endif

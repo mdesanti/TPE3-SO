@@ -1,17 +1,13 @@
-/*
- * sem.c
- *
- *  Created on: Oct 30, 2011
- *      Author: mdesanti90
- */
-
 #include "../../include/sem.h"
 #include "../../include/scheduler.h"
+
 static semaphore sems[50];
 static int firstTime = 1;
 static int key = 1;
 
-void initSems() {
+static void initSems();
+
+static void initSems() {
 	int i = 0;
 	for (i = 0; i < 50; i++) {
 		sems[i].status = -1;
