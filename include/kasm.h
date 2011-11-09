@@ -22,6 +22,7 @@ void		_int_80_hand();
 void		_int_21_hand();
 params *		_wrapper_int_80();
 
+void		_activatePaging();
 void		_call_int_08();
 void		_Halt();
 void		_restart_PC();

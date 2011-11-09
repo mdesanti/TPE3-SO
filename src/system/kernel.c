@@ -125,6 +125,7 @@ void setUpPaging(void) {
 	}
 
 	page_directory->entries[0] = (unsigned int)first_page_table;
+	page_directory->entries[0] |= 3;
 
 	//moves page_directory (which is a pointer) into the cr3 register.
 	asm volatile("mov %0, %%cr3":: "b"(page_directory));
