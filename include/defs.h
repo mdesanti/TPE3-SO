@@ -99,6 +99,10 @@ typedef struct {
 	dword base;
 } IDTR;
 
+typedef struct {
+	int entries[1024];
+} pageDirectory;
+
 typedef unsigned int uint;
 
 #endif

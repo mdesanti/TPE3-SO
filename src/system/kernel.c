@@ -11,6 +11,11 @@ DESCR_INT idt[0x81]; /* IDT with 129 entries*/
 IDTR idtr; /* IDTR */
 unsigned long long int tickpos = 0;
 
+unsigned int page_aligned_end = (((unsigned int*)0x1000000) & 0xFFFFF000);
+unsigned int *page_directory = (unsigned int*)page_aligned_end;
+
+void setUpPaging(void);
+
 void int_08() {
 	tickpos++;
 }
@@ -46,6 +51,9 @@ int kmain() {
 
 	_lidt(&idtr);
 
+
+	setUpPaging();
+
 	/* Enables timer tick and keyboard interruption */
 	_mascaraPIC1(0xFC);
 	_mascaraPIC2(0xFF);
@@ -59,4 +67,8 @@ int kmain() {
 	while (1)
 		;
 	return 0;
+}
+
+void setUpPaging(void) {
+	return;
 }
