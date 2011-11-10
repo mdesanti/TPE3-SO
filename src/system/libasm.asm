@@ -16,7 +16,6 @@ GLOBAL  _outw
 GLOBAL	_in
 GLOBAL 	_inb
 GLOBAL	_outb
-GLOBAL  _activatePaging
 
 EXTERN  int_08
 EXTERN  int_09
@@ -276,7 +275,3 @@ _outb:
 		pop		ebp
 		ret
 
-_activatePaging:
-		mov ecx, cr0
-		or ecx, 0x80000000
-		mov cr0, ecx
