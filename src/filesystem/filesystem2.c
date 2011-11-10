@@ -28,14 +28,14 @@ static int rdFifoSem = -1;
 void initializeFilesystem() {
 
 	int i;
-	printf("Checking if filesystem already exists...\n");
+//	printf("Checking if filesystem already exists...\n");
 	//	for disk cleaning
-	//cleanDisk();
+	cleanDisk();
 
 	if (existsFilesystem()) {
-		printf("Loading SuperBlock...\n");
+//		printf("Loading SuperBlock...\n");
 		loadSuperBlock();
-		printf("Loading Root...\n");
+//		printf("Loading Root...\n");
 		loadRoot();
 		initializeSTDIO();
 
@@ -45,7 +45,7 @@ void initializeFilesystem() {
 
 	} else {
 
-		printf("Initializing SuperBlock...\n");
+//		printf("Initializing SuperBlock...\n");
 
 		diskWrite(clean, 200 * 512, 3, 0);
 		diskWrite(clean, 200 * 512, 203, 0);
@@ -62,18 +62,18 @@ void initializeFilesystem() {
 		filesys.firstDataSect = START_FILES;
 		filesys.freeBlockQty = MAX_BLOCK_QTY * 8;
 
-		printf("Writing SuperBlock To Disk...\n");
-		printf("Creating root directory ...\n");
+//		printf("Writing SuperBlock To Disk...\n");
+//		printf("Creating root directory ...\n");
 		createRoot();
 		refreshSuperBlock();
 
-		printf("Initilizing Table of Open Files of the File System...\n");
+//		printf("Initilizing Table of Open Files of the File System...\n");
 
 		initializeSTDIO();
 		for (i = 3; i < MAX_OPEN_FILES; i++) {
 			table.openFiles[i].inodeNumber = -1;
 		}
-		printf("Initializing users...\n");
+//		printf("Initializing users...\n");
 		createDefaultUsers();
 	}
 }

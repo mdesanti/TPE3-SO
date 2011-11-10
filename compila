@@ -42,4 +42,4 @@ gcc -c ../src/lib/prints.c -fno-stack-protector -o prints.o -fno-builtin -Wall
 gcc -c ../src/lib/malloc.c -fno-stack-protector -o malloc.o -fno-builtin -Wall
 
 
-ld -T ../src/system/link.ld -o kernel.bin kernel.o kstart.o libc.o libasm.o keyboard.o buffer.o iolib.o terminal.o string.o commands.o prints.o scheduler.o processA.o processB.o processC.o idle.o malloc.o filesystem.o sleepQueue.o priorityQueue.o lib.o shell.o diskata.o processD.o init.o systemCalls.o AtaDiskAdapterImpl.o users.o userList.o cat.o sem.o processE.o processF.o processG.o
+ld -T ../src/system/link.ld -o kernel.bin kstart.o kernel.o libc.o libasm.o keyboard.o buffer.o iolib.o terminal.o string.o commands.o prints.o scheduler.o processA.o processB.o processC.o idle.o malloc.o filesystem.o sleepQueue.o priorityQueue.o lib.o shell.o diskata.o processD.o init.o systemCalls.o AtaDiskAdapterImpl.o users.o userList.o cat.o sem.o processE.o processF.o processG.o

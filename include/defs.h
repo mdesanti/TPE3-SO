@@ -70,7 +70,6 @@ typedef struct {
 #define ACS_CODE        (ACS_PRESENT | ACS_CSEG | ACS_READ)
 #define ACS_DATA        (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 #define ACS_STACK       (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
-#define FOURKB			0x1000;
 
 #define TICKS_PER_SEC 18
 #define WRITE 4
