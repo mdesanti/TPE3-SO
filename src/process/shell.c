@@ -19,7 +19,7 @@ char * getPath(char * source);
 void printShell() {
 	char * user = getTTYUser();
 	if (user != NULL
-	)
+		)
 		printf("%s@", getTTYUser());
 	printf("Dinux:$ ");
 }
