@@ -30,7 +30,7 @@ void initializeFilesystem() {
 	int i;
 	printf("Checking if filesystem already exists...\n");
 	//	for disk cleaning
-//	cleanDisk();
+	//cleanDisk();
 
 	if (existsFilesystem()) {
 		printf("Loading SuperBlock...\n");

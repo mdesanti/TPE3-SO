@@ -16,9 +16,6 @@ GLOBAL  _outw
 GLOBAL	_in
 GLOBAL 	_inb
 GLOBAL	_outb
-GLOBAL  _activatePaging
-GLOBAL	_setPageDir
-GLOBAL	_getCR3
 
 EXTERN  int_08
 EXTERN  int_09
@@ -230,7 +227,6 @@ _out:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out		dx, al
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -240,7 +236,6 @@ _inw:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in		ax, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -250,7 +245,6 @@ _outw:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out		dx, ax
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -260,7 +254,6 @@ _in:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in		al, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -270,7 +263,6 @@ _inb:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in byte		al, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -280,10 +272,10 @@ _outb:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out	dx, al
-		mov		esp, ebp
 		pop		ebp
 		ret
 
+<<<<<<< HEAD
 _activatePaging:
 		push	ebp
 		mov		ebp, esp
@@ -310,3 +302,5 @@ _getCR3:
 		mov		esp, ebp
 		pop		ebp
 		ret
+=======
+>>>>>>> parent of 83481b2... Paging working!
