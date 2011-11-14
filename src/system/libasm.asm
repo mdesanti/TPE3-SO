@@ -297,7 +297,7 @@ _activatePaging:
 _setPageDir:
 		push	ebp
 		mov		ebp, esp		; Stack frame
-		mov		edx, 400000h   ; PageDir address
+		mov		edx, 200000h   ; PageDir address
 		mov		cr3, edx
 		mov		esp, ebp
 		pop		ebp

@@ -118,10 +118,14 @@ void setUpPaging(void) {
 //	page_directory[0] = (unsigned int) page_directory;
 
 	//moves page_directory (which is a pointer) into the cr3 register.
-	_setPageDir(page_directory);
+//	_setPageDir(page_directory);
+	asm volatile("mov %0, %%cr3":: "b"(page_directory));
 	cr3 = _getCR3();
 	if (page_directory == cr3)
 		_activatePaging();
+	else
+		while(1);
+
 
 	//reads cr0, switches the "paging enable" bit, and writes it back.
 	k_clear_screen((unsigned char *) 0xB8000);
