@@ -12,10 +12,7 @@ IDTR idtr; /* IDTR */
 unsigned long long int tickpos = 0;
 
 //page directory inserted at de beginning of the second mega
-static pageDirectory *page_directory = (pageDirectory*)0x100000;
-static pageDirectory * lastAsignedPageTable = (pageDirectory*)0x100000;
-//static unsigned int * lastAsignedPage = (unsigned int *)(5 * 1024 * 1024);
-static unsigned int * asignPageMemDir(unsigned int * lastPage);
+static unsigned int * page_directory = (unsigned int *) (0x200000);
 
 void setUpPaging(void);
 
@@ -32,7 +29,6 @@ int kmain() {
 
 	/* Borra la pantalla y cursor */
 
-	k_clear_screen((unsigned char *) 0xB8000);
 	cursorOFF();
 
 	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE IRQ0    */
@@ -54,7 +50,6 @@ int kmain() {
 
 	_lidt(&idtr);
 
-
 	setUpPaging();
 
 	/* Enables timer tick and keyboard interruption */
@@ -62,7 +57,6 @@ int kmain() {
 	_mascaraPIC2(0xFF);
 
 	_Cli();
-//	k_clear_screen((unsigned char*) 0xB8000);
 
 	createProcess(init, 0, 0, "Init");
 	_Sti();
@@ -99,47 +93,37 @@ int kmain() {
 
 void setUpPaging(void) {
 	int i = 0;
-
+	int j = 0;
+	unsigned int * cr3;
 	//attribute: supervisor level, read/write, not present
-	for(i = 0; i < 1024; i++) {
-		page_directory->entries[i] = 0 | 2;
+	for (i = 0; i < 1024; i++) {
+		page_directory[i] = 0 | 2;
 	}
 
 	//our first page table comes right after the page directory
-	unsigned int *first_page_table = asignPageMemDir((unsigned int *)lastAsignedPageTable);
-	pageDirectory * page = (pageDirectory *) first_page_table;
-	unsigned int start = 0x0;
+	unsigned int *first_page_table = (unsigned int *) (page_directory + 4096);
+	unsigned int * page = (unsigned int *) first_page_table;
+	unsigned long int start = 0x0;
 
-	//First 256 entries of the first page are where the kernel is. Must be mapped
-	//in the first mega
-	for(i = 0; i < 256; i++) {
-		page->entries[i] = start;
-		start += FOURKB;
+	//map N megas
+	for (j = 0; j < 10; j++) {
+		for (i = 0; i < 1024; i++) {
+			page[i] = start | 3;
+			start += 4096;
+		}
+		page_directory[i] = (unsigned int) page;
+		page_directory[i] |= 3;
+		page += 4096;
 	}
-
-	//Then map over the 5th mega
-	start = 5 * 1024 * 1024 + FOURKB;
-	for( ; i < 1024; i++) {
-		page->entries[i] = start;
-		start += FOURKB;
-	}
-
-	page_directory->entries[0] = (unsigned int)first_page_table;
+//	page_directory[0] = (unsigned int) page_directory;
 
 	//moves page_directory (which is a pointer) into the cr3 register.
-	asm volatile("mov %0, %%cr3":: "b"(page_directory));
+	_setPageDir(page_directory);
+	cr3 = _getCR3();
+	if (page_directory == cr3)
+		_activatePaging();
 
 	//reads cr0, switches the "paging enable" bit, and writes it back.
-	unsigned int cr0;
-	asm volatile("mov %%cr0, %0": "=b"(cr0));
-	cr0 |= 0x80000000;
-	asm volatile("mov %0, %%cr0":: "b"(cr0));
-	k_clear_screen((unsigned char*) 0xB8000);
+	k_clear_screen((unsigned char *) 0xB8000);
 	return;
-}
-
-unsigned int * asignPageMemDir(unsigned int * lastPage) {
-	unsigned int * ret = lastPage + FOURKB;
-
-	return ret;
 }
