@@ -88,17 +88,14 @@ int kmain() {
  * 		Bit 1 -> Read/Write
  * 		Bit 2 -> User/Supervisor
  * 		Bit 6 -> Dirty
- * **********************************************************************
- * First mega is assigned to kernel
- * From the beggining of the second till the fifth will be reserved for
- * the page directory and the page tables
- * From fifth mega owards will be for mallocs
+
  */
 
 void setUpPaging(void) {
 	int i = 0;
 	int j = 0;
 	unsigned int cr3;
+	unsigned int cr0;
 	//attribute: supervisor level, read/write, not present
 	for (i = 0; i < 1024; i++) {
 		page_directory[i] = 0 | 2;
@@ -115,8 +112,8 @@ void setUpPaging(void) {
 	k_clear_screen((unsigned char *) 0xB8000);
 
 	for (j = 1; j < 3; j++) {
-		page_directory[j] = FIRST_PAGE_TABLE + PAGE_SIZE * (j-1);
-		page = (unsigned int *)page_directory[j];
+		page_directory[j] = FIRST_PAGE_TABLE + PAGE_SIZE * (j - 1);
+		page = (unsigned int *) page_directory[j];
 		page_directory[j] |= 3;
 		for (i = 0; i < 1024; i++) {
 			page[i] = start;
@@ -126,23 +123,18 @@ void setUpPaging(void) {
 	}
 	j = 0;
 	int m = 0;
-	page = (unsigned int *) (FIRST_PAGE_TABLE);
-	for (i = 0; i < 10; i++) {
-		for (m = 31; m >= 0; m--) {
-			video[j] = ((page[i] >> m) & 1) + '0';
-			j += 2;
-			if (m % 8 == 0) {
-				video[j] = ' ';
-				j += 2;
-			}
-		}
-		j += 2;
-		video[j] = ' ';
-		j += 2;
-	}
+	cr0 = _getCR0();
 	//moves page_directory (which is a pointer) into the cr3 register.
 	_setPageDir(page_directory);
 	cr3 = _getCR3();
+	for (m = 31; m >= 0; m--) {
+		video[j] = ((cr3 >> m) & 1) + '0';
+		j += 2;
+		if (m % 8 == 0) {
+			video[j] = ' ';
+			j += 2;
+		}
+	}
 	if (PAGE_DIR_START == cr3)
 		_activatePaging();
 	else {

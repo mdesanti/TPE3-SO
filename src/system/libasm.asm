@@ -19,6 +19,7 @@ GLOBAL	_outb
 GLOBAL  _activatePaging
 GLOBAL	_setPageDir
 GLOBAL	_getCR3
+GLOBAL	_getCR0
 
 EXTERN  int_08
 EXTERN  int_09
@@ -308,6 +309,14 @@ _getCR3:
 		push	ebp
 		mov		ebp, esp
 		mov eax, cr3
+		mov		esp, ebp
+		pop		ebp
+		ret
+
+_getCR0:
+		push	ebp
+		mov		ebp, esp
+		mov eax, cr0
 		mov		esp, ebp
 		pop		ebp
 		ret
