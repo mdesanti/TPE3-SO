@@ -114,14 +114,14 @@ void setUpPaging(void) {
 	//in the first mega
 	for(i = 0; i < 256; i++) {
 		page->entries[i] = start;
-		start += FOURKB;
+		start += 4096;
 	}
 
 	//Then map over the 5th mega
-	start = 5 * 1024 * 1024 + FOURKB;
+	start = 5 * 1024 * 1024 + 4096;
 	for( ; i < 1024; i++) {
 		page->entries[i] = start;
-		start += FOURKB;
+		start += 4096;
 	}
 
 	page_directory->entries[0] = (unsigned int)first_page_table;
@@ -139,7 +139,7 @@ void setUpPaging(void) {
 }
 
 unsigned int * asignPageMemDir(unsigned int * lastPage) {
-	unsigned int * ret = lastPage + FOURKB;
+	unsigned int * ret = lastPage + 4096;
 
 	return ret;
 }
