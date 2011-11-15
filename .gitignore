@@ -5,5 +5,4 @@ mtoolsrc
 .project
 bochs*
 Debug*
-bin/*
 img/tpe.img
