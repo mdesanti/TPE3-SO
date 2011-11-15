@@ -20,6 +20,7 @@ GLOBAL  _activatePaging
 GLOBAL	_setPageDir
 GLOBAL	_getCR3
 GLOBAL	_getCR0
+GLOBAL	_print
 
 EXTERN  int_08
 EXTERN  int_09

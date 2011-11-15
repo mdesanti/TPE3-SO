@@ -106,7 +106,7 @@ void setUpPaging(void) {
 	unsigned long int start = 0x0;
 
 	//map N megas
-	page_directory[0] = (unsigned int) page_directory | 3;
+	page_directory[0] = (unsigned int) (PAGE_DIR_START | 3);
 	char * video = (char *) 0xb8000;
 
 	k_clear_screen((unsigned char *) 0xB8000);
@@ -138,23 +138,25 @@ void setUpPaging(void) {
 	if (PAGE_DIR_START == cr3)
 		_activatePaging();
 	else {
-		j = 0;
-		int m = 0;
-		page = (unsigned int *) (PAGE_DIR_START + PAGE_SIZE);
-		for (i = 0; i < 10; i++) {
-			for (m = 31; m >= 0; m--) {
-				video[j] = ((page[i] >> m) & 1) + '0';
-				j += 2;
-				if (m % 8 == 0) {
-					video[j] = ' ';
-					j += 2;
-				}
-			}
-			j += 2;
-			video[j] = ' ';
-			j += 2;
-		}
+		_print();
 	}
 
 	return;
 }
+
+//j = 0;
+//		int m = 0;
+//		page = (unsigned int *) (PAGE_DIR_START + PAGE_SIZE);
+//		for (i = 0; i < 10; i++) {
+//			for (m = 31; m >= 0; m--) {
+//				video[j] = ((page[i] >> m) & 1) + '0';
+//				j += 2;
+//				if (m % 8 == 0) {
+//					video[j] = ' ';
+//					j += 2;
+//				}
+//			}
+//			j += 2;
+//			video[j] = ' ';
+//			j += 2;
+//		}
