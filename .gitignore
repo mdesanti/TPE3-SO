@@ -1,7 +1,8 @@
-
+/bin
 mtoolsrc
-*.o
+/img
 .cproject
 .project
 bochs*
+grub*
 Debug*

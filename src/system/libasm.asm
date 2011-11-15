@@ -16,11 +16,6 @@ GLOBAL  _outw
 GLOBAL	_in
 GLOBAL 	_inb
 GLOBAL	_outb
-GLOBAL  _activatePaging
-GLOBAL	_setPageDir
-GLOBAL	_getCR3
-GLOBAL	_getCR0
-GLOBAL	_print
 
 EXTERN  int_08
 EXTERN  int_09
@@ -232,7 +227,6 @@ _out:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out		dx, al
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -242,7 +236,6 @@ _inw:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in		ax, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -252,7 +245,6 @@ _outw:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out		dx, ax
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -262,7 +254,6 @@ _in:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in		al, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -272,7 +263,6 @@ _inb:
 		mov		edx, [ebp+8]    ; Puerto
 		mov		eax, 0          ; Limpio eax
 		in byte		al, dx
-		mov		esp, ebp
 		pop		ebp
 		ret
 
@@ -282,51 +272,6 @@ _outb:
 		mov		edx, [ebp+8]   	; Puerto
 		mov		eax, [ebp+12]  	; Lo que se va a mandar
 		out	dx, al
-		mov		esp, ebp
 		pop		ebp
 		ret
 
-_activatePaging:
-		push	ebp
-		mov		ebp, esp
-		mov		eax, cr0
-		or 		eax, 0x80000000
-		;call	_print
-		mov 	cr0, eax
-		mov		esp, ebp
-		pop		ebp
-		ret
-
-_setPageDir:
-		push	ebp
-		mov		ebp, esp
-		mov		edx, [ebp+8]		; Stack frame
-		mov		cr3, edx
-		mov		esp, ebp
-		pop		ebp
-		ret
-
-_getCR3:
-		push	ebp
-		mov		ebp, esp
-		mov eax, cr3
-		mov		esp, ebp
-		pop		ebp
-		ret
-
-_getCR0:
-		push	ebp
-		mov		ebp, esp
-		mov eax, cr0
-		mov		esp, ebp
-		pop		ebp
-		ret
-
-_print:
-		mov		ebx, 0xb8000
-		mov 	eax, 0
-again:
-		mov 	[ebx], eax
-		add		eax, 1
-		add		ebx, 2
-		jmp		again

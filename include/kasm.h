@@ -31,10 +31,5 @@ int			_outw();
 int 		_in();
 unsigned char _inb();
 void		_outb();
-void		_activatePaging();
-void		_setPageDir();
-unsigned int _getCR3();
-unsigned int _getCR0();
-void		 _print();
 
 void		_debug (void);
