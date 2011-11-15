@@ -287,17 +287,18 @@ _outb:
 _activatePaging:
 		push	ebp
 		mov		ebp, esp
-		mov eax, cr0
-		or eax, 80000000h
-		mov cr0, eax
+		mov		eax, cr0
+		or 		eax, 0x80000000
+		;call	_print
+		mov 	cr0, eax
 		mov		esp, ebp
 		pop		ebp
 		ret
 
 _setPageDir:
 		push	ebp
-		mov		ebp, esp		; Stack frame
-		mov		edx, 200000h   ; PageDir address
+		mov		ebp, esp
+		mov		edx, [ebp+8]		; Stack frame
 		mov		cr3, edx
 		mov		esp, ebp
 		pop		ebp
@@ -310,3 +311,12 @@ _getCR3:
 		mov		esp, ebp
 		pop		ebp
 		ret
+
+_print:
+		mov		ebx, 0xb8000
+		mov 	eax, 0
+again:
+		mov 	[ebx], eax
+		add		eax, 1
+		add		ebx, 2
+		jmp		again

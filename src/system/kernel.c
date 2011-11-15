@@ -7,12 +7,16 @@
 #include "../../include/diskata.h"
 #include "../../include/init.h"
 
+#define PAGE_DIR_START 0x300000
+#define FIRST_PAGE_TABLE 0x301000
+#define PAGE_SIZE 0x1000
+
 DESCR_INT idt[0x81]; /* IDT with 129 entries*/
 IDTR idtr; /* IDTR */
 unsigned long long int tickpos = 0;
 
 //page directory inserted at de beginning of the second mega
-static unsigned int * page_directory = (unsigned int *) (0x200000);
+static unsigned int * page_directory = (unsigned int *) PAGE_DIR_START;
 
 void setUpPaging(void);
 
@@ -94,40 +98,71 @@ int kmain() {
 void setUpPaging(void) {
 	int i = 0;
 	int j = 0;
-	unsigned int * cr3;
+	unsigned int cr3;
 	//attribute: supervisor level, read/write, not present
 	for (i = 0; i < 1024; i++) {
 		page_directory[i] = 0 | 2;
 	}
 
 	//our first page table comes right after the page directory
-	unsigned int *first_page_table = (unsigned int *) (page_directory + 4096);
-	unsigned int * page = (unsigned int *) first_page_table;
+	unsigned int *page = (unsigned int *) FIRST_PAGE_TABLE;
 	unsigned long int start = 0x0;
 
 	//map N megas
-	for (j = 0; j < 10; j++) {
-		for (i = 0; i < 1024; i++) {
-			page[i] = start | 3;
-			start += 4096;
-		}
-		page_directory[i] = (unsigned int) page;
-		page_directory[i] |= 3;
-		page += 4096;
-	}
-//	page_directory[0] = (unsigned int) page_directory;
+	page_directory[0] = (unsigned int) page_directory | 3;
+	char * video = (char *) 0xb8000;
 
-	//moves page_directory (which is a pointer) into the cr3 register.
-//	_setPageDir(page_directory);
-	asm volatile("mov %0, %%cr3":: "b"(page_directory));
-	cr3 = _getCR3();
-	if (page_directory == cr3)
-		_activatePaging();
-	else
-		while(1);
-
-
-	//reads cr0, switches the "paging enable" bit, and writes it back.
 	k_clear_screen((unsigned char *) 0xB8000);
+
+	for (j = 1; j < 3; j++) {
+		page_directory[j] = FIRST_PAGE_TABLE + PAGE_SIZE * (j-1);
+		page = (unsigned int *)page_directory[j];
+		page_directory[j] |= 3;
+		for (i = 0; i < 1024; i++) {
+			page[i] = start;
+			page[i] |= 3;
+			start = start + PAGE_SIZE;
+		}
+	}
+	j = 0;
+	int m = 0;
+	page = (unsigned int *) (FIRST_PAGE_TABLE);
+	for (i = 0; i < 10; i++) {
+		for (m = 31; m >= 0; m--) {
+			video[j] = ((page[i] >> m) & 1) + '0';
+			j += 2;
+			if (m % 8 == 0) {
+				video[j] = ' ';
+				j += 2;
+			}
+		}
+		j += 2;
+		video[j] = ' ';
+		j += 2;
+	}
+	//moves page_directory (which is a pointer) into the cr3 register.
+	_setPageDir(page_directory);
+	cr3 = _getCR3();
+	if (PAGE_DIR_START == cr3)
+		_activatePaging();
+	else {
+		j = 0;
+		int m = 0;
+		page = (unsigned int *) (PAGE_DIR_START + PAGE_SIZE);
+		for (i = 0; i < 10; i++) {
+			for (m = 31; m >= 0; m--) {
+				video[j] = ((page[i] >> m) & 1) + '0';
+				j += 2;
+				if (m % 8 == 0) {
+					video[j] = ' ';
+					j += 2;
+				}
+			}
+			j += 2;
+			video[j] = ' ';
+			j += 2;
+		}
+	}
+
 	return;
 }
