@@ -1,0 +1,5 @@
+default 0
+timeout 20
+title Dinux
+
+kernel /boot/kernel.bin

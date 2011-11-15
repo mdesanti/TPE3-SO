@@ -7,15 +7,16 @@
 #include "../../include/diskata.h"
 #include "../../include/init.h"
 
+#define PAGE_DIR_START 0x300000
+#define FIRST_PAGE_TABLE 0x301000
+#define PAGE_SIZE 0x1000
+
 DESCR_INT idt[0x81]; /* IDT with 129 entries*/
 IDTR idtr; /* IDTR */
 unsigned long long int tickpos = 0;
 
 //page directory inserted at de beginning of the second mega
-static pageDirectory *page_directory = (pageDirectory*)0x100000;
-static pageDirectory * lastAsignedPageTable = (pageDirectory*)0x100000;
-//static unsigned int * lastAsignedPage = (unsigned int *)(5 * 1024 * 1024);
-static unsigned int * asignPageMemDir(unsigned int * lastPage);
+static unsigned int * page_directory = (unsigned int *) PAGE_DIR_START;
 
 void setUpPaging(void);
 
@@ -32,7 +33,6 @@ int kmain() {
 
 	/* Borra la pantalla y cursor */
 
-	k_clear_screen((unsigned char *) 0xB8000);
 	cursorOFF();
 
 	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE IRQ0    */
@@ -54,7 +54,6 @@ int kmain() {
 
 	_lidt(&idtr);
 
-
 	setUpPaging();
 
 	/* Enables timer tick and keyboard interruption */
@@ -62,7 +61,6 @@ int kmain() {
 	_mascaraPIC2(0xFF);
 
 	_Cli();
-//	k_clear_screen((unsigned char*) 0xB8000);
 
 	createProcess(init, 0, 0, "Init");
 	_Sti();
@@ -90,56 +88,73 @@ int kmain() {
  * 		Bit 1 -> Read/Write
  * 		Bit 2 -> User/Supervisor
  * 		Bit 6 -> Dirty
- * **********************************************************************
- * First mega is assigned to kernel
- * From the beggining of the second till the fifth will be reserved for
- * the page directory and the page tables
- * From fifth mega owards will be for mallocs
+
  */
 
 void setUpPaging(void) {
 	int i = 0;
-
+	int j = 0;
+	unsigned int cr3;
+	unsigned int cr0;
 	//attribute: supervisor level, read/write, not present
-	for(i = 0; i < 1024; i++) {
-		page_directory->entries[i] = 0 | 2;
+	for (i = 0; i < 1024; i++) {
+		page_directory[i] = 0 | 2;
 	}
 
 	//our first page table comes right after the page directory
-	unsigned int *first_page_table = asignPageMemDir((unsigned int *)lastAsignedPageTable);
-	pageDirectory * page = (pageDirectory *) first_page_table;
-	unsigned int start = 0x0;
+	unsigned int *page = (unsigned int *) FIRST_PAGE_TABLE;
+	unsigned long int start = 0x0;
 
-	//First 256 entries of the first page are where the kernel is. Must be mapped
-	//in the first mega
-	for(i = 0; i < 256; i++) {
-		page->entries[i] = start;
-		start += FOURKB;
+	//map N megas
+	page_directory[0] = (unsigned int) page_directory | 3;
+	char * video = (char *) 0xb8000;
+
+	k_clear_screen((unsigned char *) 0xB8000);
+
+	for (j = 1; j < 3; j++) {
+		page_directory[j] = FIRST_PAGE_TABLE + PAGE_SIZE * (j - 1);
+		page = (unsigned int *) page_directory[j];
+		page_directory[j] |= 3;
+		for (i = 0; i < 1024; i++) {
+			page[i] = start;
+			page[i] |= 3;
+			start = start + PAGE_SIZE;
+		}
 	}
-
-	//Then map over the 5th mega
-	start = 5 * 1024 * 1024 + FOURKB;
-	for( ; i < 1024; i++) {
-		page->entries[i] = start;
-		start += FOURKB;
-	}
-
-	page_directory->entries[0] = (unsigned int)first_page_table;
-
+	j = 0;
+	int m = 0;
+	cr0 = _getCR0();
 	//moves page_directory (which is a pointer) into the cr3 register.
-	asm volatile("mov %0, %%cr3":: "b"(page_directory));
+	_setPageDir(page_directory);
+	cr3 = _getCR3();
+	for (m = 31; m >= 0; m--) {
+		video[j] = ((cr3 >> m) & 1) + '0';
+		j += 2;
+		if (m % 8 == 0) {
+			video[j] = ' ';
+			j += 2;
+		}
+	}
+	if (PAGE_DIR_START == cr3)
+		_activatePaging();
+	else {
+		j = 0;
+		int m = 0;
+		page = (unsigned int *) (PAGE_DIR_START + PAGE_SIZE);
+		for (i = 0; i < 10; i++) {
+			for (m = 31; m >= 0; m--) {
+				video[j] = ((page[i] >> m) & 1) + '0';
+				j += 2;
+				if (m % 8 == 0) {
+					video[j] = ' ';
+					j += 2;
+				}
+			}
+			j += 2;
+			video[j] = ' ';
+			j += 2;
+		}
+	}
 
-	//reads cr0, switches the "paging enable" bit, and writes it back.
-	unsigned int cr0;
-	asm volatile("mov %%cr0, %0": "=b"(cr0));
-	cr0 |= 0x80000000;
-	asm volatile("mov %0, %%cr0":: "b"(cr0));
-	k_clear_screen((unsigned char*) 0xB8000);
 	return;
-}
-
-unsigned int * asignPageMemDir(unsigned int * lastPage) {
-	unsigned int * ret = lastPage + FOURKB;
-
-	return ret;
 }
