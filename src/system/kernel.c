@@ -6,6 +6,7 @@
 #include "../../include/scheduler.h"
 #include "../../include/diskata.h"
 #include "../../include/init.h"
+#include "../../include/kasm.h"
 
 #define PAGE_DIR_START 0x300000
 #define FIRST_PAGE_TABLE 0x301000
@@ -138,7 +139,7 @@ void setUpPaging(void) {
 	if (PAGE_DIR_START == cr3)
 		_activatePaging();
 	else {
-		printASM();
+		_printASM();
 	}
 
 	return;
