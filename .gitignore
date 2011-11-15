@@ -6,3 +6,4 @@ mtoolsrc
 bochs*
 Debug*
 img/tpe.img
+bin/kernel.bin
