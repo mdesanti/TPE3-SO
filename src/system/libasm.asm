@@ -20,7 +20,7 @@ GLOBAL  _activatePaging
 GLOBAL	_setPageDir
 GLOBAL	_getCR3
 GLOBAL	_getCR0
-GLObAL	_print
+GLObAL	_printASM
 
 EXTERN  int_08
 EXTERN  int_09
@@ -322,7 +322,7 @@ _getCR0:
 		pop		ebp
 		ret
 
-_print:
+_printASM:
 		mov		ebx, 0xb8000
 		mov 	eax, 0
 again:

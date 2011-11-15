@@ -138,7 +138,7 @@ void setUpPaging(void) {
 	if (PAGE_DIR_START == cr3)
 		_activatePaging();
 	else {
-		print();
+		printASM();
 	}
 
 	return;
